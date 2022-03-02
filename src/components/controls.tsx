@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { ControlsProvider, Canvas } from './controls-provider';
 import styled from 'styled-components';
 import { animated, useSpring, to } from '@react-spring/web';
@@ -7,7 +7,6 @@ import useMeasure from 'react-use-measure';
 import { clamp } from '../utils';
 import { DEFAULT_GROUP } from '../types';
 import { ControlsContext } from '../contexts/controls-context';
-import { useLocalStorage } from '../hooks/use-local-storage';
 import { ControlGroup } from './control-group';
 
 const mq = `@media only screen and (max-width: 600px)`;
@@ -32,7 +31,7 @@ export interface ControlsProps {
   /**
    * Collapsed by default
    */
-  collapsed?: boolean;
+  collapsed: boolean;
   /**
    * Array of group names as strings
    */
@@ -175,14 +174,10 @@ export const Controls: ControlsFn = (props: ControlsProps) => {
     anchor = ControlsAnchor.TOP_RIGHT,
   } = props;
   const { controls } = useContext(ControlsContext);
-  const [collapsed, setCollapsed] = useLocalStorage(
-    'REACT_THREE_GUI__COLLAPSED',
-    props.collapsed
-  );
-  const [position, setPosition] = useLocalStorage(
-    `REACT_THREE_GUI__${anchor}`,
-    [0, 0]
-  );
+  const [collapsed, setCollapsed] = useState(props.collapsed);
+
+  const [position, setPosition] = useState([0, 0]);
+
   const [ref, bounds] = useMeasure();
   const [{ pos }, setPos] = useSpring(() => ({
     pos: position,
